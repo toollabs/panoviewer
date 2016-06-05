@@ -1,5 +1,5 @@
 <?php
-// http://commons.wikimedia.org/w/thumb.php?w=48&f=Harding%20Icefield%201.jpg
+// https://commons.wikimedia.org/w/thumb.php?w=48&f=Harding%20Icefield%201.jpg
 
 $f = str_replace(' ', '_', ucfirst($_GET['f']));
 if (array_key_exists('t', $_GET))
@@ -56,9 +56,9 @@ else
 if (!is_readable($c))
 {
   if ($t == '')
-    $fullfile = 'http://upload.wikimedia.org/wikipedia/commons/' . substr($md5,0,1) . '/' . substr($md5,0,2) . '/' . $f;
+    $fullfile = 'https://upload.wikimedia.org/wikipedia/commons/' . substr($md5,0,1) . '/' . substr($md5,0,2) . '/' . $f;
   else
-    $fullfile = 'http://commons.wikimedia.org/w/thumb.php?w=' . $t . '&f=' . $f;
+    $fullfile = 'https://commons.wikimedia.org/w/thumb.php?w=' . $t . '&f=' . $f;
 
   // either not cached before, or cached version too old
   ini_set('user_agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');

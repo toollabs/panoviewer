@@ -1,0 +1,1 @@
+../pannellum/utils/multires/generate.py

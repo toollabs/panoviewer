@@ -34,8 +34,9 @@ if (mysqli_num_rows($res) != 1)
 $row = mysqli_fetch_array($res);
 $width = intval($row['img_width']);
 
-echo "{ 'popel': 'nase' }";
-exit 0;
+header('Content-Type: application/json');
+echo '{ "popel": "nase" }';
+exit;
 
 // see if we have an up to date untiled version in the cache
 $fetch_file = false;

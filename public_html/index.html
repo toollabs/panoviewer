@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panorama Viewer</title>
-    <script type="text/javascript" src="http://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
     <link rel="stylesheet" href="src/css/pannellum.css"/>
     <script type="text/javascript" src="src/js/pannellum.js"></script>
 </head>
@@ -24,8 +24,15 @@ var p = $('#panorama');
 p.width($(window).innerWidth());
 p.height($(window).innerHeight());
 
-// attempt first load of configuration
-$.getJSON('config.php', { f: window.location.hash }, configLoaded);
+// passed in file name
+var f = location.hash.substring(1);
+if (f != '')
+{
+  // attempt first load of configuration
+  $.getJSON('config.php', { 'f': f }, configLoaded);
+}
+else
+  console.log("Specify a filename");
 </script>
 
 </body>

@@ -1,4 +1,6 @@
 <?php
+// all images above this size are tiled (and temporarily shown as a max_size rescaled version)
+$max_size = 4000;
 
 // get normalized filename
 $f = str_replace(' ', '_', ucfirst($_GET['f']));
@@ -8,8 +10,9 @@ if ($f == "")
   exit;
 }
 
-// maximum untiled size
-$max_size = 4000
+// cache identifier
+$md5 = md5($f);
+$c = 'cache/' . $md5 . '.jpg';
 
 // connect to database
 $ts_pw = posix_getpwuid(posix_getuid());
@@ -21,24 +24,20 @@ unset($ts_mycnf, $ts_pw);
 $sql = sprintf("SELECT img_timestamp, img_width, img_height FROM image WHERE img_name = '%s'", mysqli_real_escape_string($db, $f));
 $res = mysqli_query($db, $sql);
 
-if (mysqli_num_rows($res) == 1)
-{
-  $row = mysqli_fetch_array($res);
-
-  // do not fetch a thumbnail if the full image is already smaller than the
-  // requested size
-  if (intval($row['img_width']) < $t) $t = '';
-}
-else
+if (mysqli_num_rows($res) != 1)
 {
   echo "Database error.";
   exit;
 }
 
-$c = 'cache/' . md5($f . $t) . '.jpg';
-$md5 = md5($f);
+// fetch data on the current image
+$row = mysqli_fetch_array($res);
+$width = intval($row['img_width']);
 
+echo "{ 'popel': 'nase' }";
+exit 0;
 
+// see if we have an up to date untiled version in the cache
 $fetch_file = false;
 if (is_readable($c))
 {
@@ -83,6 +82,4 @@ if (!is_readable($c))
   fclose($handle2);
   fclose($handle);
 }
-
-header('Location: //tools.wmflabs.org/panoviewer/' . $c);
 ?>

@@ -87,5 +87,9 @@ if ($update_cache)
 }
 
 // redirect to config.json file
-header('Location: //tools.wmflabs.org/panoviewer/' . $cfg);
+$json = json_decode(file_get_contents($cfg));
+$json->multiRes->path = $dir . $json->multiRes->path;
+$json->multiRes->fallbackPath = $dir . $json->multiRes->fallbackPath;
+
+echo json_encode($json);
 ?>

@@ -43,6 +43,19 @@ var f = location.hash.substring(1);
 // container to hold the pannellum viewer
 var p = $('#panorama');
 
+// is the window currently active (if not skip network requests)
+var active = true,
+    handler = null;
+$(window).focus(function() {
+  if (!active) recheck();
+  active = true;
+});
+$(window).blur(function() {
+  clearTimeout(handler);
+  handler = null;
+  active = false;
+});
+
 // set notification defaults
 $.noty.defaults.layout = 'bottomRight';
 $.noty.defaults.theme = 'relax';
@@ -61,13 +74,12 @@ function recheck()
              callback: { onCloseClick: function() { p.empty(); configLoaded(data); } }
            });
     } else {
-      if (data.multires_pending) {
-        setTimeout(recheck, 1000);
-      }
+      handler = setTimeout(recheck, 5000);
     }
   }
 
-  $.getJSON('config.php', { 'f': f }, handleCheckReply);
+  // use p=1 to activate simplified polling mode on the server
+  $.getJSON('config.php', { 'f': f, 'p': 1 }, handleCheckReply);
 }
 
 // called once a json config is obtained
@@ -88,7 +100,7 @@ function configLoaded(data)
   // display a message if a multiresolution build is pending
   if ('multires_pending' in data && data.multires_pending) {
     noty({ text: "A better version is being prepared - I'll let you know when it is done", type: 'information' });
-    setTimeout(recheck, 1000);
+    setTimeout(recheck, 5000);
   }
 }
 

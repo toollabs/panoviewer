@@ -44,12 +44,10 @@ var f = location.hash.substring(1);
 var p = $('#panorama');
 
 // set notification defaults
-$.noty.defaults = {
-  layout: 'bottomRight',
-  theme: 'relax',
-  type: 'error',
-  timeout: true
-};
+$.noty.defaults.layout = 'bottomRight';
+$.noty.defaults.theme = 'relax';
+$.noty.defaults.type = 'error';
+$.noty.defaults.timeout = 5000;
 
 // recheck if the mutiresolution data is prepared
 function recheck()

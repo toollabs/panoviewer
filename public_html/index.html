@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panorama Viewer</title>
     <script type="text/javascript" src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="http://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-noty/2.3.8/promise.js"></script>
+    <script type="text/javascript" src="http://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-noty/2.3.8/jquery.noty.min.js"></script>
     <link rel="stylesheet" href="src/css/pannellum.css"/>
     <script type="text/javascript" src="src/js/libpannellum.js"></script>
     <script type="text/javascript" src="src/js/pannellum.js"></script>
@@ -37,30 +39,50 @@
 </div>
 
 <script>
+// passed in file name
+var f = location.hash.substring(1);
+// container to hold the pannellum viewer
 var p = $('#panorama');
+
+// recheck if the mutiresolution data is prepared
+function recheck()
+{
+  function handleCheckReply(data)
+  {
+    if (!('multires_pending' in data)) {
+      noty({ text: "Reload window to see a high resolution version",
+             timeout: false,
+             callback: { onCloseClick: function() { p.empty(); configLoaded(data); } }
+           });
+    } else {
+      if (data.multires_pending) {
+        setTimeout(recheck, 1000);
+      }
+    }
+  }
+
+  $.getJSON('config.php', { 'f': f }, handleCheckReply);
+}
 
 // called once a json config is obtained
 function configLoaded(data)
 {
-  // stop managing the resize ourself
-  $(window).off('resize');
-
   // check for errors
   if ('error' in data) {
-    console.log(data.error);
+    noty({ text: data.error });
   }
 
   // launch the viewer
   if ('pannellum' in data) {
-    console.log(data.pannellum);
     pannellum.viewer('panorama', data.pannellum);
   } else {
-    console.log("No pannellum config returned");
+    noty({ text: "No pannellum config returned" });
   }
 
   // display a message if a multiresolution build is pending
   if ('multires_pending' in data && data.multires_pending) {
-    console.log("A better version is being prepared - I'll let you know when it is done");
+    noty({ text: "A better version is being prepared - I'll let you know when it is done" });
+    setTimeout(recheck, 1000);
   }
 }
 
@@ -73,15 +95,15 @@ function resize()
 $(window).on('resize', resize);
 resize();
 
-// passed in file name
-var f = location.hash.substring(1);
+// load the panorama data
 if (f != '')
 {
   // attempt first load of configuration
   $.getJSON('config.php', { 'f': f }, configLoaded);
+} else {
+  noty({ text: "Specify a filename" });
 }
-else
-  console.log("Specify a filename");
+
 </script>
 
 </body>

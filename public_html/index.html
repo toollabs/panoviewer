@@ -43,14 +43,23 @@ var f = location.hash.substring(1);
 // container to hold the pannellum viewer
 var p = $('#panorama');
 
+// set notification defaults
+$.noty.defaults = {
+  layout: 'bottomRight',
+  theme: 'relax',
+  type: 'error',
+  timeout: true
+};
+
 // recheck if the mutiresolution data is prepared
 function recheck()
 {
   function handleCheckReply(data)
   {
     if (!('multires_pending' in data)) {
-      noty({ text: "Reload window to see a high resolution version",
+      noty({ text: "Click to show high resolution version",
              timeout: false,
+             type: 'alert',
              callback: { onCloseClick: function() { p.empty(); configLoaded(data); } }
            });
     } else {
@@ -80,7 +89,7 @@ function configLoaded(data)
 
   // display a message if a multiresolution build is pending
   if ('multires_pending' in data && data.multires_pending) {
-    noty({ text: "A better version is being prepared - I'll let you know when it is done" });
+    noty({ text: "A better version is being prepared - I'll let you know when it is done", type: 'information' });
     setTimeout(recheck, 1000);
   }
 }

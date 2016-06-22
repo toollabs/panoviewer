@@ -33,7 +33,7 @@ $res = mysqli_query($db, $sql);
 
 if (mysqli_num_rows($res) != 1)
 {
-  echo '{ "error": "Database error (found ' . mysqli_num_rows($res) . 'results; should be 1)" }';
+  echo '{ "error": "Database error (found ' . mysqli_num_rows($res) . ' results; should be 1)" }';
   exit;
 }
 

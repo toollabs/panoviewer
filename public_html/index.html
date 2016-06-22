@@ -43,8 +43,22 @@ function configLoaded(data)
   // stop managing the resize ourself
   $(window).off('resize');
 
-  console.log(data);
-  //pannellum.viewer('panorama', data);
+  // check for errors
+  if ('error' in data) {
+    console.log(data.error);
+  }
+
+  // launch the viewer
+  if ('pannellum' in data) {
+    pannellum.viewer('panorama', data.pannellum);
+  } else {
+    console.log("No pannellum config returned");
+  }
+
+  // display a message if a multiresolution build is pending
+  if ('multires_pending' in data && data.multires_pending) {
+    console.log("A better version is being prepared - I'll let you know when it is done");
+  }
 }
 
 // size panorama to full window

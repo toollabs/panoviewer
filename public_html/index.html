@@ -10,6 +10,7 @@
     <script type="text/javascript" src="src/js/pannellum.js"></script>
     <style>
       body {
+        margin: 0;
         background: #f4f4f4 url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2267%22%20height%3D%22100%22%20viewBox%3D%220%200%2067%20100%22%3E%0A%3Cpath%20stroke%3D%22%23ccc%22%20fill%3D%22none%22%20d%3D%22M33.5%2C50%2C0%2C63%2C33.5%2C75%2C67%2C63%2C33.5%2C50m-33.5-50%2C67%2C25m-0.5%2C0%2C0%2C75m-66.5-75%2C67-25m-33.5%2C75%2C0%2C25m0-100%2C0%2C50%22%2F%3E%0A%3C%2Fsvg%3E%0A') repeat
       }
       #message {
@@ -51,6 +52,7 @@ function configLoaded(data)
 
   // launch the viewer
   if ('pannellum' in data) {
+    console.log(data.pannellum);
     pannellum.viewer('panorama', data.pannellum);
   } else {
     console.log("No pannellum config returned");

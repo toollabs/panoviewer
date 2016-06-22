@@ -120,5 +120,8 @@ else
   ];
 }
 
+// force auto loading
+$json->pannellum->autoLoad = true;
+
 echo json_encode($json);
 ?>

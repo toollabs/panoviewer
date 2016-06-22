@@ -46,15 +46,6 @@ var p = $('#panorama');
 // is the window currently active (if not skip network requests)
 var active = true,
     handler = null;
-$(window).focus(function() {
-  if (!active) recheck();
-  active = true;
-});
-$(window).blur(function() {
-  clearTimeout(handler);
-  handler = null;
-  active = false;
-});
 
 // set notification defaults
 $.noty.defaults.layout = 'bottomRight';
@@ -73,6 +64,12 @@ function recheck()
              type: 'alert',
              callback: { onCloseClick: function() { p.empty(); configLoaded(data); } }
            });
+
+      // no further polling is required
+      $(window).off('focus.multires_poll');
+      $(window).off('blur.multires_poll');
+      clearTimeout(handler);
+      handler = null;
     } else {
       handler = setTimeout(recheck, 5000);
     }
@@ -100,7 +97,18 @@ function configLoaded(data)
   // display a message if a multiresolution build is pending
   if ('multires_pending' in data && data.multires_pending) {
     noty({ text: "A better version is being prepared - I'll let you know when it is done", type: 'information' });
-    setTimeout(recheck, 5000);
+    handler = setTimeout(recheck, 5000);
+
+    // make sure polling only happens when the window is active
+    $(window).on('focus.multires_poll', function() {
+      if (!active) recheck();
+      active = true;
+    });
+    $(window).on('blur.multires_poll', function() {
+      clearTimeout(handler);
+      handler = null;
+      active = false;
+    });
   }
 }
 

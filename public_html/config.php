@@ -103,8 +103,8 @@ if (is_readable($cache_config))
 {
   // redirect to config.json file
   $config = json_decode(file_get_contents($cache_config));
-  $config->multiRes->path = $cache_prefix . $json->multiRes->path;
-  $config->multiRes->fallbackPath = $dir . $json->multiRes->fallbackPath;
+  $config->multiRes->path = $cache_prefix . $config->multiRes->path;
+  $config->multiRes->fallbackPath = $cache_prefix . $config->multiRes->fallbackPath;
   $json = (object) [
     'pannellum' => $config
   ];

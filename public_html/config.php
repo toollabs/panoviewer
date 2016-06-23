@@ -78,8 +78,7 @@ if (!array_key_exists('p', $_GET))
     if ($width > $max_width)
     {
       $preview = 'https://commons.wikimedia.org/w/thumb.php?w=' . $max_width . '&f=' . $f;
-
-      // TODO dispatch the tiling job in the background, while we serve the preview
+      exec ('jsub -N ' . escapeshellarg($md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg($f), $out, $ret);
     }
     else
       $preview = $fullfile;

@@ -6,11 +6,11 @@ MD5=$2
 FILE=$3
 
 # fetch the full res file
-TMP=${DIR}${MD5}.jpg
+TMP=${DIR}${MD5}.full.jpg
 MD51=`echo $MD5 | cut -c1`
 MD52=`echo $MD5 | cut -c1-2`
-wget -o $TMP https://upload.wikimedia.org/wikipedia/commons/${MD51}/${MD52}/${FILE}
+wget -O "$TMP" "https://upload.wikimedia.org/wikipedia/commons/${MD51}/${MD52}/${FILE}"
 
 # generate tiled cube faces
 MULTI=${DIR}${MD5}
-./generate.py -o $MULTI $TMP
+./generate.py -o "$MULTI" "$TMP"

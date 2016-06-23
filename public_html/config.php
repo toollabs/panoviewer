@@ -78,7 +78,8 @@ if (!array_key_exists('p', $_GET))
     if ($width > $max_width)
     {
       $preview = 'https://commons.wikimedia.org/w/thumb.php?w=' . $max_width . '&f=' . $f;
-      exec ('jsub -N ' . escapeshellarg($md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg($f), $out, $ret);
+      $command = 'jsub -l release=trusty -N ' . escapeshellarg('pano_' . $md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg($f);
+      exec ($command, $out, $ret);
     }
     else
       $preview = $fullfile;

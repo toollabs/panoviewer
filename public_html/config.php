@@ -10,7 +10,7 @@ header("Expires: 0");
 
 // get normalized filename
 if (array_key_exists('f', $_GET))
-  $f = str_replace(' ', '_', ucfirst($_GET['f']));
+  $f = str_replace(' ', '_', ucfirst(urldecode($_GET['f'])));
 else {
   echo '{ "error": "No file name supplied" }';
   exit;
@@ -78,7 +78,7 @@ if (!array_key_exists('p', $_GET))
     if ($width > $max_width)
     {
       $preview = 'https://commons.wikimedia.org/w/thumb.php?w=' . $max_width . '&f=' . $f;
-      $command = 'jsub -l release=trusty -N ' . escapeshellarg('pano_' . $md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg($f);
+      $command = 'jsub -mem 2048m -l release=trusty -N ' . escapeshellarg('pano_' . $md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg(urlencode($f));
       exec ($command, $out, $ret);
     }
     else

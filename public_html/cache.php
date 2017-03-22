@@ -45,7 +45,7 @@ $fetch_file = false;
 if (is_readable($c))
 {
   // get cache modification time
-  $ctime = strftime("%Y%m%d%H%M%S", filectime($c));
+  $ctime = strftime("%Y%m%d%H%M%S", filemtime($c));
 
   // we need to re-fetch the file if the last upload reported by the database is NEWER than the file we have cached
   $fetch_file =  $row['img_timestamp'] > $ctime;

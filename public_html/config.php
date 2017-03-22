@@ -49,10 +49,10 @@ if (!array_key_exists('p', $_GET))
   if (is_readable($cache_file))
   {
     // get cache modification time
-    $ctime = strftime("%Y%m%d%H%M%S", filectime($cache_file));
+    $mtime = strftime("%Y%m%d%H%M%S", filemtime($cache_file));
 
     // we need to re-fetch the file if the last upload reported by the database is NEWER than the file we have cached
-    $fetch_file =  $row['img_timestamp'] > $ctime;
+    $fetch_file =  $row['img_timestamp'] > $mtime;
   }
   else
     $fetch_file = true;
@@ -73,6 +73,9 @@ if (!array_key_exists('p', $_GET))
       echo '{ "error": "This file does not look like a valid JPEG" }';
       exit;
     }
+
+    // delete a potentially existing older multires cache
+    rmdir($cache_prefix);
 
     // for large images we prepare a downscaled preview while the tiling is in progress
     if ($width > $max_width)

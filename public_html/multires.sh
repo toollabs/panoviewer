@@ -13,4 +13,5 @@ wget -O "$TMP" "https://upload.wikimedia.org/wikipedia/commons/${MD51}/${MD52}/$
 
 # generate tiled cube faces
 MULTI=${DIR}${MD5}
+rm -rf $MULTI
 ./generate.py -o "$MULTI" "$TMP"

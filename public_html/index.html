@@ -43,7 +43,7 @@
 
 <script>
 // passed in file name
-var f = location.hash.substring(1);
+var f = decodeURIComponent(location.hash.substring(1));
 // container to hold the pannellum viewer
 var p = $('#panorama');
 

@@ -67,7 +67,11 @@ if (!is_readable($c))
   if ($t == '')
   {
     $image = file_get_contents($fullfile, false, null, 0, 100);
-    if (substr($image,6,4) != 'JFIF' && substr($image,6,4) != 'Exif' && substr($image,6,9) != 'Photoshop')
+
+    if (substr($image, 6, 4)  != 'JFIF' &&
+        substr($image, 6, 4)  != 'Exif' &&
+        substr($image, 6, 9)  != 'Photoshop' &&
+        substr($image, 6, 20) != 'http://ns.adobe.com/')
       exit;
   }
 

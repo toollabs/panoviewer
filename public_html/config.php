@@ -64,11 +64,12 @@ if (!array_key_exists('p', $_GET))
     ini_set('user_agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');
 
     // make sure the file is a valid JPG file
-    $fullfile = 'https://upload.wikimedia.org/wikipedia/commons/' . substr($md5, 0, 1) . '/' . substr($md5, 0, 2) . '/' . $f;
+    $fullfile = 'https://upload.wikimedia.org/wikipedia/commons/' . substr($md5, 0, 1) . '/' . substr($md5, 0, 2) . '/' . urlencode($f);
     $image = file_get_contents($fullfile, false, null, 0, 100);
-    if (substr($image, 6, 4) != 'JFIF' &&
-        substr($image, 6, 4) != 'Exif' &&
-        substr($image, 6, 9) != 'Photoshop')
+    if (substr($image, 6, 4)  != 'JFIF' &&
+        substr($image, 6, 4)  != 'Exif' &&
+        substr($image, 6, 9)  != 'Photoshop' &&
+	substr($image, 6, 20) != 'http://ns.adobe.com/')
     {
       echo '{ "error": "This file does not look like a valid JPEG" }';
       exit;
@@ -80,7 +81,7 @@ if (!array_key_exists('p', $_GET))
     // for large images we prepare a downscaled preview while the tiling is in progress
     if ($width > $max_width)
     {
-      $preview = 'https://commons.wikimedia.org/w/thumb.php?w=' . $max_width . '&f=' . $f;
+      $preview = 'https://commons.wikimedia.org/w/thumb.php?w=' . $max_width . '&f=' . urlencode($f);
       $command = 'jsub -mem 2048m -l release=trusty -N ' . escapeshellarg('pano_' . $md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg(urlencode($f));
       exec ($command, $out, $ret);
     }
@@ -91,7 +92,10 @@ if (!array_key_exists('p', $_GET))
     umask(022);
     $src = fopen($preview, 'rb');
     $dst = fopen($cache_file, 'wb');
-    if (!$src || !$dst) exit;
+    if (!$src || !$dst) {
+	echo '{ "fullfile": "' . $fullfile . '", "src": "'.$src.'", "dst": "'.$dst.'" }';
+	exit;
+    }
 
     // copy the file in 8kB chunks
     while (!feof($src))

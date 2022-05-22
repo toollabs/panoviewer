@@ -117,7 +117,8 @@ if (is_readable($cache_config))
   $config->multiRes->path = $cache_prefix . $config->multiRes->path;
   $config->multiRes->fallbackPath = $cache_prefix . $config->multiRes->fallbackPath;
   $json = (object) [
-    'pannellum' => $config
+    'pannellum' => $config,
+    'width' => $width
   ];
 }
 else
@@ -126,7 +127,8 @@ else
   $json = (object) [
     'multires_pending' => ($width > $max_width),
     'pannellum' => (object)[
-      'panorama' => $cache_file
+      'panorama' => $cache_file,
+      'width' => $width
     ]
   ];
 }

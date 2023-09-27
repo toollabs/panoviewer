@@ -74,7 +74,7 @@ function recheck()
       $(window).off('blur.multires_poll');
       clearTimeout(handler);
       handler = null;
-    } else {
+    } else if (data.multires_pending) {
       handler = setTimeout(recheck, 5000);
     }
   }

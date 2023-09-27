@@ -21,29 +21,29 @@ $md5 = md5($file_name);
 $cache_prefix = 'cache/' . $md5;
 $cache_file = $cache_prefix . '.jpg';
 
+// connect to database
+$ts_pw = posix_getpwuid(posix_getuid());
+$ts_mycnf = parse_ini_file($ts_pw['dir'] . "/replica.my.cnf");
+$db = mysqli_connect("p:commonswiki.labsdb", $ts_mycnf['user'], $ts_mycnf['password'], "commonswiki_p");
+unset($ts_mycnf, $ts_pw);
+
+// get last upload date and image dimensions from database
+$sql = sprintf("SELECT img_timestamp, img_width, img_height FROM image WHERE img_name = '%s'", mysqli_real_escape_string($db, $file_name));
+$res = mysqli_query($db, $sql);
+
+if (mysqli_num_rows($res) != 1)
+{
+  echo '{ "error": "Database error (found ' . mysqli_num_rows($res) . ' results; should be 1)" }';
+  exit;
+}
+
+// fetch data on the current image
+$row = mysqli_fetch_array($res);
+$width = intval($row['img_width']);
+
 // if we are only polling to check if the multires is done we skip all the db stuff!
 if (!array_key_exists('p', $_GET))
 {
-  // connect to database
-  $ts_pw = posix_getpwuid(posix_getuid());
-  $ts_mycnf = parse_ini_file($ts_pw['dir'] . "/replica.my.cnf");
-  $db = mysqli_connect("p:commonswiki.labsdb", $ts_mycnf['user'], $ts_mycnf['password'], "commonswiki_p");
-  unset($ts_mycnf, $ts_pw);
-
-  // get last upload date and image dimensions from database
-  $sql = sprintf("SELECT img_timestamp, img_width, img_height FROM image WHERE img_name = '%s'", mysqli_real_escape_string($db, $file_name));
-  $res = mysqli_query($db, $sql);
-
-  if (mysqli_num_rows($res) != 1)
-  {
-    echo '{ "error": "Database error (found ' . mysqli_num_rows($res) . ' results; should be 1)" }';
-    exit;
-  }
-
-  // fetch data on the current image
-  $row = mysqli_fetch_array($res);
-  $width = intval($row['img_width']);
-
   // see if we have an up to date untiled version in the cache
   $fetch_file = false;
   if (is_readable($cache_file))

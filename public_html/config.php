@@ -10,7 +10,7 @@ header("Expires: 0");
 
 // get normalized filename
 if (array_key_exists('f', $_GET))
-  $file_name = str_replace(' ', '_', ucfirst(urldecode($_GET['f'])));
+  $file_name = str_replace(' ', '_', ucfirst($_GET['f']));
 else {
   echo '{ "error": "No file name supplied" }';
   exit;

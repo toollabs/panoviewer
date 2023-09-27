@@ -1,12 +1,12 @@
 <?php
 
-$f = str_replace(' ', '_', ucfirst($_GET['f']));
+$file_name = str_replace(' ', '_', ucfirst($_GET['f']));
 if (array_key_exists('t', $_GET))
-  $t = intval($_GET['t']);
+  $thumb_width = intval($_GET['t']);
 else
-  $t = '';
+  $thumb_width = '';
 
-if ($f == "")
+if ($file_name == "")
 {
   echo "Supply a filename!";
   exit;
@@ -19,7 +19,7 @@ $db = mysqli_connect("p:commonswiki.labsdb", $ts_mycnf['user'], $ts_mycnf['passw
 unset($ts_mycnf, $ts_pw);
 
 // get last upload date and image dimensions from database
-$sql = sprintf("SELECT img_timestamp, img_width, img_height FROM image WHERE img_name = '%s'", mysqli_real_escape_string($db, $f));
+$sql = sprintf("SELECT img_timestamp, img_width, img_height FROM image WHERE img_name = '%s'", mysqli_real_escape_string($db, $file_name));
 $res = mysqli_query($db, $sql);
 
 if (mysqli_num_rows($res) == 1)
@@ -28,7 +28,7 @@ if (mysqli_num_rows($res) == 1)
 
   // do not fetch a thumbnail if the full image is already smaller than the
   // requested size
-  if (intval($row['img_width']) < $t) $t = '';
+  if (intval($row['img_width']) < $thumb_width) $thumb_width = '';
 }
 else
 {
@@ -37,7 +37,7 @@ else
 }
 
 
-$md5 = md5($f);
+$md5 = md5($file_name);
 $dir = 'cache/' . $md5;
 $tmp = $dir . '.jpg';
 $cfg = $dir . '/config.json';
@@ -56,7 +56,7 @@ else
 
 if ($update_cache)
 {
-  $fullfile = 'https://upload.wikimedia.org/wikipedia/commons/' . substr($md5,0,1) . '/' . substr($md5,0,2) . '/' . $f;
+  $fullfile = 'https://upload.wikimedia.org/wikipedia/commons/' . substr($md5,0,1) . '/' . substr($md5,0,2) . '/' . $file_name;
 
   // either not cached before, or cached version too old
   ini_set('user_agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');

@@ -61,7 +61,7 @@ if (!array_key_exists('p', $_GET))
   if ($fetch_file)
   {
     // either not cached before, or cached version too old
-    ini_set('user_agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');
+    ini_set('user_agent', 'panoviewer/1.0 (https://panoviewer.toolforge.org/)');
 
     // make sure the file is a valid JPG file
     $fullfile = 'https://upload.wikimedia.org/wikipedia/commons/' . substr($md5, 0, 1) . '/' . substr($md5, 0, 2) . '/' . urlencode($file_name);

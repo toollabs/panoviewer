@@ -61,7 +61,7 @@ if (!is_readable($c))
     $fullfile = 'https://commons.wikimedia.org/w/thumb.php?w=' . $thumb_width . '&f=' . $file_name;
 
   // either not cached before, or cached version too old
-  ini_set('user_agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');
+  ini_set('user_agent', 'panoviewer/1.0 (https://panoviewer.toolforge.org/)');
 
   // if we are not getting a thumbnail make sure the file is a valid JPG file
   if ($thumb_width == '')

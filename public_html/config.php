@@ -82,7 +82,7 @@ if (!array_key_exists('p', $_GET))
     if ($width > $max_width)
     {
       $preview = 'https://commons.wikimedia.org/w/thumb.php?w=' . $max_width . '&f=' . urlencode($file_name);
-      $command = 'jsub -mem 2048m -l release=trusty -N ' . escapeshellarg('pano_' . $md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg(urlencode($file_name));
+      $command = 'jsub -mem 2048m -N ' . escapeshellarg('pano_' . $md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg(urlencode($file_name));
       exec ($command, $out, $ret);
     }
     else

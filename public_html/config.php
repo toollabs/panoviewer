@@ -10,40 +10,40 @@ header("Expires: 0");
 
 // get normalized filename
 if (array_key_exists('f', $_GET))
-  $f = str_replace(' ', '_', ucfirst(urldecode($_GET['f'])));
+  $file_name = str_replace(' ', '_', ucfirst($_GET['f']));
 else {
   echo '{ "error": "No file name supplied" }';
   exit;
 }
 
 // cache identifier
-$md5 = md5($f);
+$md5 = md5($file_name);
 $cache_prefix = 'cache/' . $md5;
 $cache_file = $cache_prefix . '.jpg';
+
+// connect to database
+$ts_pw = posix_getpwuid(posix_getuid());
+$ts_mycnf = parse_ini_file($ts_pw['dir'] . "/replica.my.cnf");
+$db = mysqli_connect("p:commonswiki.labsdb", $ts_mycnf['user'], $ts_mycnf['password'], "commonswiki_p");
+unset($ts_mycnf, $ts_pw);
+
+// get last upload date and image dimensions from database
+$sql = sprintf("SELECT img_timestamp, img_width, img_height FROM image WHERE img_name = '%s'", mysqli_real_escape_string($db, $file_name));
+$res = mysqli_query($db, $sql);
+
+if (mysqli_num_rows($res) != 1)
+{
+  echo '{ "error": "Database error (found ' . mysqli_num_rows($res) . ' results; should be 1)" }';
+  exit;
+}
+
+// fetch data on the current image
+$row = mysqli_fetch_array($res);
+$width = intval($row['img_width']);
 
 // if we are only polling to check if the multires is done we skip all the db stuff!
 if (!array_key_exists('p', $_GET))
 {
-  // connect to database
-  $ts_pw = posix_getpwuid(posix_getuid());
-  $ts_mycnf = parse_ini_file($ts_pw['dir'] . "/replica.my.cnf");
-  $db = mysqli_connect("p:commonswiki.labsdb", $ts_mycnf['user'], $ts_mycnf['password'], "commonswiki_p");
-  unset($ts_mycnf, $ts_pw);
-
-  // get last upload date and image dimensions from database
-  $sql = sprintf("SELECT img_timestamp, img_width, img_height FROM image WHERE img_name = '%s'", mysqli_real_escape_string($db, $f));
-  $res = mysqli_query($db, $sql);
-
-  if (mysqli_num_rows($res) != 1)
-  {
-    echo '{ "error": "Database error (found ' . mysqli_num_rows($res) . ' results; should be 1)" }';
-    exit;
-  }
-
-  // fetch data on the current image
-  $row = mysqli_fetch_array($res);
-  $width = intval($row['img_width']);
-
   // see if we have an up to date untiled version in the cache
   $fetch_file = false;
   if (is_readable($cache_file))
@@ -61,10 +61,10 @@ if (!array_key_exists('p', $_GET))
   if ($fetch_file)
   {
     // either not cached before, or cached version too old
-    ini_set('user_agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');
+    ini_set('user_agent', 'panoviewer/1.0 (https://panoviewer.toolforge.org/)');
 
     // make sure the file is a valid JPG file
-    $fullfile = 'https://upload.wikimedia.org/wikipedia/commons/' . substr($md5, 0, 1) . '/' . substr($md5, 0, 2) . '/' . urlencode($f);
+    $fullfile = 'https://upload.wikimedia.org/wikipedia/commons/' . substr($md5, 0, 1) . '/' . substr($md5, 0, 2) . '/' . urlencode($file_name);
     $image = file_get_contents($fullfile, false, null, 0, 100);
     if (substr($image, 6, 4)  != 'JFIF' &&
         substr($image, 6, 4)  != 'Exif' &&
@@ -81,8 +81,8 @@ if (!array_key_exists('p', $_GET))
     // for large images we prepare a downscaled preview while the tiling is in progress
     if ($width > $max_width)
     {
-      $preview = 'https://commons.wikimedia.org/w/thumb.php?w=' . $max_width . '&f=' . urlencode($f);
-      $command = 'jsub -mem 2048m -l release=trusty -N ' . escapeshellarg('pano_' . $md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg(urlencode($f));
+      $preview = 'https://commons.wikimedia.org/w/thumb.php?w=' . $max_width . '&f=' . urlencode($file_name);
+      $command = 'jsub -mem 2048m -N ' . escapeshellarg('pano_' . $md5) . ' -once ./multires.sh cache/ ' . escapeshellarg($md5) . ' ' . escapeshellarg(urlencode($file_name));
       exec ($command, $out, $ret);
     }
     else

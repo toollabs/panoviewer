@@ -1,6 +1,6 @@
 <?php
 // all images above this size are tiled (and temporarily shown as a max_size rescaled version)
-$max_width = 3700; // Temporarly reduced from 4000 to address issues in Thumbor T344233
+$max_width = 4000;
 
 // send content type header and prevent caching
 header('Content-Type: application/json');
